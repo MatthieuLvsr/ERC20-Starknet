@@ -41,17 +41,17 @@ mod ERC20{
     
     #[abi(embed_v0)]
     impl ERC20Impl of erc20::interfaces::erc20::IERC20<ContractState>{
-        pub fn balanceOf(ref self:@TContractState, address: ContractAddress) -> u256 {
+        fn balanceOf(self:@ContractState, address: ContractAddress) -> u256 {
             self.balances.entry(address).read()
         }
 
-        pub fn totalSupply(ref self:@TContractState) -> u256 {
+        fn totalSupply(self: @ContractState) -> u256 {
             self.supply.read()
         }
 
-        pub fn transfer(ref self:TContractState, amount: u256, to: ContractAddress){
+        fn transfer(ref self:ContractState, amount: u256, to: ContractAddress){
             assert(self.balances.entry(get_caller_address()).read() >= amount, 'Not enough money in bank');
-            assert(to != 0x0, 'Wrong address');
+            // assert(to != 0x0, 'Wrong address');
             let currentFrom:u256 = self.balances.entry(get_caller_address()).read();
             let currentTo:u256 = self.balances.entry(to).read();
             self.balances.entry(get_caller_address()).write(currentFrom - amount);
